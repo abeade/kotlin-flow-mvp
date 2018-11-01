@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">MoviesApp</string>
+    <!-- Popular shows -->
+    <string name="popular_shows_error_loading">Error loading popular shows</string>
+    <string name="popular_shows_no_results">No results found</string>
+</resources>
