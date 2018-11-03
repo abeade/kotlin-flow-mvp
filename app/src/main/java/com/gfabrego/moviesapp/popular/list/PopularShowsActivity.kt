@@ -39,6 +39,11 @@ class PopularShowsActivity : AppCompatActivity(), PopularShowsView {
     private fun createAdapter() {
         adapter = PopularShowsAdapter()
         rvShowsList.adapter = adapter
+        rvShowsList.addOnScrollListener(object : RecyclerViewEndlessOnScrollListener() {
+            override fun onLoadMore() {
+                Toast.makeText(this@PopularShowsActivity, getString(R.string.app_name), Toast.LENGTH_LONG).show()
+            }
+        })
     }
 
     override fun onDestroy() {
@@ -110,7 +115,7 @@ class PopularShowsActivity : AppCompatActivity(), PopularShowsView {
         }.build()
 
     private companion object {
-        private const val BASE_URL = "http://api.themoviedb.org/"
+        private const val BASE_URL = "https://api.themoviedb.org/"
     }
     // endregion
 }
