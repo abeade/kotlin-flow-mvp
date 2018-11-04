@@ -35,6 +35,6 @@ internal class PopularShowsApiMapper {
 
     private companion object {
         // TODO: configurations might be retrieved from the configuration API
-        private const val BASE_POSTER_IMAGE_URL = "http://image.tmdb.org/t/p/w154"
+        private const val BASE_POSTER_IMAGE_URL = "https://image.tmdb.org/t/p/w154"
     }
 }
