@@ -9,7 +9,6 @@ import com.gfabrego.moviesapp.domaincore.Interactor
 import com.gfabrego.moviesapp.popular.data.network.PopularShowsApiDataSource
 import com.gfabrego.moviesapp.popular.data.network.PopularShowsApiMapper
 import com.gfabrego.moviesapp.popular.data.network.PopularShowsService
-import com.gfabrego.moviesapp.popular.data.network.retrofitadapter.FlowCallAdapterFactory
 import com.gfabrego.moviesapp.popular.data.repository.PopularShowsDataRepository
 import com.gfabrego.moviesapp.popular.domain.interactor.GetPopularShows
 import com.gfabrego.moviesapp.popular.domain.model.PageRequestFactory
@@ -105,7 +104,6 @@ class PopularShowsActivity : AppCompatActivity(), PopularShowsView, CoroutineSco
             .baseUrl(BASE_URL)
             .client(provideHttpClient())
             .addConverterFactory(MoshiConverterFactory.create())
-            .addCallAdapterFactory(FlowCallAdapterFactory.create())
             .build()
 
     private fun provideHttpClient(): OkHttpClient =
