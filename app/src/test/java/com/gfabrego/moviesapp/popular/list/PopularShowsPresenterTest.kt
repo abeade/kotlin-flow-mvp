@@ -6,7 +6,7 @@ import com.gfabrego.moviesapp.popular.domain.model.PageRequest
 import com.gfabrego.moviesapp.popular.domain.model.PageRequestFactory
 import com.gfabrego.moviesapp.popular.domain.model.PopularShowsResponse
 import com.gfabrego.moviesapp.popular.domain.model.Show
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Test
@@ -36,7 +36,7 @@ class PopularShowsPresenterTest {
         val shows = anyListOfShows()
         val request = PageRequest.Paged(1)
         given(pageRequestFactory.createInitialPage()).willReturn(request)
-        given(getPopularShows.build(GetPopularShows.Params(request))).willReturn(flow { emit(PopularShowsResponse(shows, PageRequest.Paged(2), -1)) })
+        given(getPopularShows.build(GetPopularShows.Params(request))).willReturn(flowOf(PopularShowsResponse(shows, PageRequest.Paged(2), -1)))
 
         buildPresenter().attachView()
 

@@ -4,7 +4,7 @@ import com.gfabrego.moviesapp.popular.domain.model.PageRequest
 import com.gfabrego.moviesapp.popular.domain.model.PopularShowsResponse
 import com.gfabrego.moviesapp.popular.domain.model.Show
 import com.gfabrego.moviesapp.popular.domain.repository.PopularShowsRepository
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
@@ -29,7 +29,7 @@ class GetPopularShowsTest {
     fun `build should call repository`() {
         val shows = anyListOfShows()
         val request = PageRequest.Paged(1)
-        given(popularShowsRepository.getPopularShows(request)).willReturn(flow { emit(PopularShowsResponse(shows, PageRequest.Paged(2), -1)) })
+        given(popularShowsRepository.getPopularShows(request)).willReturn(flowOf(PopularShowsResponse(shows, PageRequest.Paged(2), -1)))
 
         buildUseCase().build(GetPopularShows.Params(request))
 
@@ -40,7 +40,7 @@ class GetPopularShowsTest {
     fun `build should return expected flow`() = testScope.runBlockingTest {
         val shows = anyListOfShows()
         val request = PageRequest.Paged(1)
-        val flow = flow { emit(PopularShowsResponse(shows, PageRequest.Paged(2), -1)) }
+        val flow = flowOf(PopularShowsResponse(shows, PageRequest.Paged(2), -1))
         given(popularShowsRepository.getPopularShows(request)).willReturn(flow)
 
         val result = buildUseCase().build(GetPopularShows.Params(request)).single()
