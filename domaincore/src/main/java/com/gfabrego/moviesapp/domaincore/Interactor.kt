@@ -1,8 +1,8 @@
 package com.gfabrego.moviesapp.domaincore
 
-import io.reactivex.Observable
+import kotlinx.coroutines.flow.Flow
 
 interface Interactor<I: Any, O: Any> {
 
-    fun build(params: I): Observable<O>
+    fun build(params: I): Flow<O>
 }

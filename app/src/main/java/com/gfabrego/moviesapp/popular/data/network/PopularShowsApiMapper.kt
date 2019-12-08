@@ -7,7 +7,7 @@ import java.net.URL
 
 internal class PopularShowsApiMapper {
 
-    internal fun map(response: PopularShowsApiResponse): PopularShowsResponse =
+    internal suspend fun map(response: PopularShowsApiResponse): PopularShowsResponse =
         PopularShowsResponse(mapShows(response), mapNextPage(response))
 
     private fun mapShows(response: PopularShowsApiResponse): List<Show> =

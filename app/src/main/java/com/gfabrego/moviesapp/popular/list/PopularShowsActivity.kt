@@ -9,31 +9,40 @@ import com.gfabrego.moviesapp.domaincore.Interactor
 import com.gfabrego.moviesapp.popular.data.network.PopularShowsApiDataSource
 import com.gfabrego.moviesapp.popular.data.network.PopularShowsApiMapper
 import com.gfabrego.moviesapp.popular.data.network.PopularShowsService
+import com.gfabrego.moviesapp.popular.data.network.retrofitadapter.FlowCallAdapterFactory
 import com.gfabrego.moviesapp.popular.data.repository.PopularShowsDataRepository
 import com.gfabrego.moviesapp.popular.domain.interactor.GetPopularShows
 import com.gfabrego.moviesapp.popular.domain.model.PageRequestFactory
 import com.gfabrego.moviesapp.popular.domain.model.PopularShowsResponse
 import com.gfabrego.moviesapp.popular.domain.model.Show
 import com.gfabrego.moviesapp.popular.domain.repository.PopularShowsRepository
-import io.reactivex.Observable
 import kotlinx.android.synthetic.main.activity_popular_shows.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 
-class PopularShowsActivity : AppCompatActivity(), PopularShowsView {
+class PopularShowsActivity : AppCompatActivity(), PopularShowsView, CoroutineScope by MainScope() {
+
+    private companion object {
+        private const val BASE_URL = "https://api.themoviedb.org/"
+    }
 
     private val presenter = injectPresenter()
     private lateinit var adapter: PopularShowsAdapter
 
-    // region LIFECYCLE
+    //region LIFECYCLE
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_popular_shows)
         createAdapter()
-        presenter.attachView()
+        launch {
+            presenter.attachView()
+        }
     }
 
     private fun createAdapter() {
@@ -47,16 +56,12 @@ class PopularShowsActivity : AppCompatActivity(), PopularShowsView {
     }
 
     override fun onDestroy() {
-        presenter.detachView()
+        cancel()
         super.onDestroy()
     }
-    // endregion
+    //endregion
 
-    // region INTENTS
-    override fun loadFirstPageIntent(): Observable<Unit> = Observable.fromCallable { Unit }
-    // endregion
-
-    // region VIEW RENDERING
+    //region VIEW RENDERING
     override fun hideLoading() {
         srPullToRefresh.isRefreshing = false
     }
@@ -76,12 +81,12 @@ class PopularShowsActivity : AppCompatActivity(), PopularShowsView {
     override fun showShows(showsList: List<Show>) {
         adapter.submitList(showsList)
     }
-    // endregion
+    //endregion
 
-    // region "INJECTION"
+    //region "INJECTION"
     // TODO: replace with real injection
     private fun injectPresenter(): PopularShowsPresenter =
-        PopularShowsPresenter(this, provideGetPopularShows(), PageRequestFactory())
+        PopularShowsPresenter(this, provideGetPopularShows(), PageRequestFactory(), coroutineContext)
 
     private fun provideGetPopularShows(): Interactor<GetPopularShows.Params, PopularShowsResponse> =
         GetPopularShows(providePopularShowsRepository())
@@ -100,7 +105,7 @@ class PopularShowsActivity : AppCompatActivity(), PopularShowsView {
             .baseUrl(BASE_URL)
             .client(provideHttpClient())
             .addConverterFactory(MoshiConverterFactory.create())
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .addCallAdapterFactory(FlowCallAdapterFactory.create())
             .build()
 
     private fun provideHttpClient(): OkHttpClient =
@@ -113,9 +118,5 @@ class PopularShowsActivity : AppCompatActivity(), PopularShowsView {
                 builder
             }
         }.build()
-
-    private companion object {
-        private const val BASE_URL = "https://api.themoviedb.org/"
-    }
-    // endregion
+    //endregion
 }
