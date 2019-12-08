@@ -7,22 +7,27 @@ import com.gfabrego.moviesapp.popular.domain.model.PageRequestFactory
 import com.gfabrego.moviesapp.popular.domain.model.PopularShowsResponse
 import com.gfabrego.moviesapp.popular.domain.model.Show
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.withContext
-import kotlin.coroutines.CoroutineContext
 
 internal class PopularShowsPresenter(
     private val view: PopularShowsView,
     private val getPopularShows: Interactor<GetPopularShows.Params, PopularShowsResponse>,
     private val pageRequestFactory: PageRequestFactory,
-    override val coroutineContext: CoroutineContext
-) : CoroutineScope {
+    private val coroutineScope: CoroutineScope
+) {
 
     internal suspend fun attachView() {
         view.showLoading()
-        withContext(coroutineContext) {
+        withContext(coroutineScope.coroutineContext) {
             getPopularShows.build(GetPopularShows.Params(buildInitialPage()))
+                .map {
+                    delay(5000)
+                    it
+                }
                 .catch { renderErrorState() }
                 .single()
                 .let {
