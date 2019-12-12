@@ -19,7 +19,6 @@ import kotlinx.android.synthetic.main.activity_popular_shows.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -39,9 +38,7 @@ class PopularShowsActivity : AppCompatActivity(), PopularShowsView, CoroutineSco
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_popular_shows)
         createAdapter()
-        launch {
-            presenter.attachView()
-        }
+        presenter.attachView()
     }
 
     private fun createAdapter() {

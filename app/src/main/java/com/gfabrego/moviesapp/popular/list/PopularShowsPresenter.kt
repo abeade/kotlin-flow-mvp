@@ -11,6 +11,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.single
+import kotlinx.coroutines.flow.transform
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 internal class PopularShowsPresenter(
@@ -20,9 +22,9 @@ internal class PopularShowsPresenter(
     private val coroutineScope: CoroutineScope
 ) {
 
-    internal suspend fun attachView() {
+    internal fun attachView() {
         view.showLoading()
-        withContext(coroutineScope.coroutineContext) {
+        coroutineScope.launch {
             getPopularShows.build(GetPopularShows.Params(buildInitialPage()))
                 .map {
                     delay(5000)
