@@ -3,6 +3,7 @@ package com.gfabrego.moviesapp.popular.list
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.gfabrego.moviesapp.BuildConfig
 import com.gfabrego.moviesapp.R
 import com.gfabrego.moviesapp.domaincore.Interactor
@@ -16,15 +17,12 @@ import com.gfabrego.moviesapp.popular.domain.model.PopularShowsResponse
 import com.gfabrego.moviesapp.popular.domain.model.Show
 import com.gfabrego.moviesapp.popular.domain.repository.PopularShowsRepository
 import kotlinx.android.synthetic.main.activity_popular_shows.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.cancel
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
-class PopularShowsActivity : AppCompatActivity(), PopularShowsView, CoroutineScope by MainScope() {
+class PopularShowsActivity : AppCompatActivity(), PopularShowsView {
 
     private companion object {
         private const val BASE_URL = "https://api.themoviedb.org/"
@@ -49,11 +47,6 @@ class PopularShowsActivity : AppCompatActivity(), PopularShowsView, CoroutineSco
                 Toast.makeText(this@PopularShowsActivity, getString(R.string.app_name), Toast.LENGTH_LONG).show()
             }
         })
-    }
-
-    override fun onDestroy() {
-        cancel()
-        super.onDestroy()
     }
     //endregion
 
@@ -82,7 +75,7 @@ class PopularShowsActivity : AppCompatActivity(), PopularShowsView, CoroutineSco
     //region "INJECTION"
     // TODO: replace with real injection
     private fun injectPresenter(): PopularShowsPresenter =
-        PopularShowsPresenter(this, provideGetPopularShows(), PageRequestFactory(), this)
+        PopularShowsPresenter(this, provideGetPopularShows(), PageRequestFactory(), this.lifecycleScope)
 
     private fun provideGetPopularShows(): Interactor<GetPopularShows.Params, PopularShowsResponse> =
         GetPopularShows(providePopularShowsRepository())
